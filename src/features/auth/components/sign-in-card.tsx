@@ -1,4 +1,7 @@
+import { use, useState } from "react";
+
 import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,17 +13,27 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { FaGithub } from "react-icons/fa";
+
 import { SignInFlow } from "../types";
-import { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignInCardProps {
   setState: (state: SignInFlow) => void;
 }
 
 export function SignInCard({ setState }: SignInCardProps) {
+  const { signIn } = useAuthActions();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const onProviderSignIn = (value: "github" | "google") => {
+    setPending(true);
+    signIn(value).finally(() => {
+      setPending(false);
+    });
+  };
 
   return (
     <Card className="w-full h-full p-8">
@@ -33,7 +46,7 @@ export function SignInCard({ setState }: SignInCardProps) {
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5" action="">
           <Input
-            disabled={false}
+            disabled={pending}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
@@ -41,14 +54,14 @@ export function SignInCard({ setState }: SignInCardProps) {
             required
           />
           <Input
-            disabled={false}
+            disabled={pending}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             type="password"
             required
           />
-          <Button type="submit" size="lg" className="w-full" disabled={false}>
+          <Button type="submit" size="lg" className="w-full" disabled={pending}>
             Continue
           </Button>
         </form>
@@ -59,17 +72,17 @@ export function SignInCard({ setState }: SignInCardProps) {
             variant="outline"
             size="lg"
             className="w-full relative"
-            disabled={false}
+            disabled={pending}
           >
             <FcGoogle className="size-5 absolute top-2.5 left-2.5" />
             Continue with Google
           </Button>
           <Button
-            onClick={() => {}}
+            onClick={() => onProviderSignIn("github")}
             variant="outline"
             size="lg"
             className="w-full relative"
-            disabled={false}
+            disabled={pending}
           >
             <FaGithub className="size-5 absolute top-2.5 left-2.5" />
             Continue with Github
