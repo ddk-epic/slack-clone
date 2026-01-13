@@ -1,6 +1,5 @@
-import { use, useState } from "react";
+import { useState } from "react";
 
-import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +27,7 @@ export function SignInCard({ setState }: SignInCardProps) {
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
 
-  const onProviderSignIn = (value: "github" | "google") => {
+  const onProviderSignIn = (value: "github") => {
     setPending(true);
     signIn(value).finally(() => {
       setPending(false);
@@ -67,16 +66,6 @@ export function SignInCard({ setState }: SignInCardProps) {
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5">
-          <Button
-            onClick={() => {}}
-            variant="outline"
-            size="lg"
-            className="w-full relative"
-            disabled={pending}
-          >
-            <FcGoogle className="size-5 absolute top-2.5 left-2.5" />
-            Continue with Google
-          </Button>
           <Button
             onClick={() => onProviderSignIn("github")}
             variant="outline"
