@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
 import { useCreateWorkspace } from "../api/use-create-workspace";
@@ -32,6 +33,7 @@ function CreateWorkspaceModal() {
       { name },
       {
         onSuccess(workspaceId) {
+          toast.success("Workspace created!");
           router.push(`/workspace/${workspaceId}`);
           handleClose();
         },
