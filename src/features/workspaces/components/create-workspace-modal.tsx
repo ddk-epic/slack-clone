@@ -14,9 +14,10 @@ import { toast } from "sonner";
 
 import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
 import { useCreateWorkspace } from "../api/use-create-workspace";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 function CreateWorkspaceModal() {
+  const router = useRouter();
   const { mutate, isPending } = useCreateWorkspace();
 
   const [open, setOpen] = useCreateWorkspaceModal();
