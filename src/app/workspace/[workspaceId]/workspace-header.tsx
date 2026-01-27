@@ -65,7 +65,7 @@ function WorkspaceHeader({ workspace, isAdmin }: WorkspaceHeaderProps) {
                 <DropdownMenuSeparator />
                 {/* Settings */}
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => setPreferencesOpen(true)}
                   className="py-2 cursor-pointer"
                 >
                   Preferences
