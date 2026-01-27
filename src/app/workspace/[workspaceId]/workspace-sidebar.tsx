@@ -13,6 +13,7 @@ import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useGetChannels } from "@/features/channels/api/use-get-channels";
+import WorkspaceSection from "./workspace-section";
 
 function WorkspaceSidebar() {
   const workspaceId = useWorkspaceId();
@@ -53,6 +54,8 @@ function WorkspaceSidebar() {
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem id="threads" label="Threads" icon={MessageSquareText} />
         <SidebarItem id="drafts" label="Drafts & Send" icon={SendHorizonal} />
+      </div>
+      <WorkspaceSection label="Channels" hint="New Channel" onNew={() => {}}>
         {channels?.map((item) => (
           <SidebarItem
             key={item._id}
@@ -61,7 +64,7 @@ function WorkspaceSidebar() {
             icon={HashIcon}
           />
         ))}
-      </div>
+      </WorkspaceSection>
     </div>
   );
 }
