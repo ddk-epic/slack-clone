@@ -9,9 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+import { useCreateChannel } from "../api/use-create-channel";
 import { useCreateChannelModal } from "../store/use-create-channel-modal";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 function CreateChannelModal() {
+  const workspaceId = useWorkspaceId();
+  const { mutate, isPending } = useCreateChannel();
+
   const [open, setOpen] = useCreateChannelModal();
   const [channelName, setChannelName] = useState("");
 
@@ -25,25 +30,38 @@ function CreateChannelModal() {
     setChannelName(value);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutate(
+      { name: channelName, workspaceId },
+      {
+        onSuccess: () => {
+          //TODO: Redirect to the new channel
+          handleClose();
+        },
+      },
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new channel</DialogTitle>
         </DialogHeader>
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            value=""
+            value={channelName}
             minLength={3}
             maxLength={80}
             onChange={handleChange}
             placeholder="e.g. general"
-            disabled={false}
+            disabled={isPending}
             autoFocus
             required
           />
           <div className="flex justify-end">
-            <Button disabled={false}>Create</Button>
+            <Button disabled={isPending}>Create</Button>
           </div>
         </form>
       </DialogContent>
