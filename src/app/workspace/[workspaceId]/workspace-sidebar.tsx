@@ -64,7 +64,11 @@ function WorkspaceSidebar() {
         <SidebarItem id="threads" label="Threads" icon={MessageSquareText} />
         <SidebarItem id="drafts" label="Drafts & Send" icon={SendHorizonal} />
       </div>
-      <WorkspaceSection label="Channels" hint="New Channel" onNew={() => {}}>
+      <WorkspaceSection
+        label="Channels"
+        hint="New Channel"
+        onNew={member.role === "admin" ? () => setOpen(true) : undefined}
+      >
         {channels?.map((item) => (
           <SidebarItem
             key={item._id}
@@ -77,7 +81,7 @@ function WorkspaceSidebar() {
       <WorkspaceSection
         label="Direct Messages"
         hint="New direct message"
-        onNew={member.role === "admin" ? () => setOpen(true) : undefined}
+        onNew={() => {}}
       >
         {members?.map((item) => (
           <UserItem
