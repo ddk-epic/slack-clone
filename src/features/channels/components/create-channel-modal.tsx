@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +16,9 @@ import { useCreateChannelModal } from "../store/use-create-channel-modal";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 function CreateChannelModal() {
+  const router = useRouter();
   const workspaceId = useWorkspaceId();
+
   const { mutate, isPending } = useCreateChannel();
 
   const [open, setOpen] = useCreateChannelModal();
@@ -35,8 +39,8 @@ function CreateChannelModal() {
     mutate(
       { name: channelName, workspaceId },
       {
-        onSuccess: () => {
-          //TODO: Redirect to the new channel
+        onSuccess: (id) => {
+          router.push(`/workspace/${workspaceId}/channel/${id}`)
           handleClose();
         },
       },
