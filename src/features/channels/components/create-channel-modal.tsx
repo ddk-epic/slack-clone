@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import { useCreateChannel } from "../api/use-create-channel";
 import { useCreateChannelModal } from "../store/use-create-channel-modal";
@@ -40,9 +41,13 @@ function CreateChannelModal() {
       { name: channelName, workspaceId },
       {
         onSuccess: (id) => {
-          router.push(`/workspace/${workspaceId}/channel/${id}`)
+          toast.success("Channel created");
+          router.push(`/workspace/${workspaceId}/channel/${id}`);
           handleClose();
         },
+        onError: () => {
+          toast.error("Failed to create Channel")
+        }
       },
     );
   };
