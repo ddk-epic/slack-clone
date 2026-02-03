@@ -43,6 +43,7 @@ function Editor({
   disabled = false,
 }: EditorProps) {
   const [text, setText] = useState("");
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
   const submitRef = useRef(onSubmit);
   const placeholderRef = useRef(placeholder);
@@ -70,6 +71,31 @@ function Editor({
     const options: QuillOptions = {
       theme: "snow",
       placeholder: placeholderRef.current,
+      modules: {
+        toolbar: [
+          ["bold", "italic", "strike"],
+          ["link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+        keyboard: {
+          bindings: {
+            enter: {
+              key: "Enter",
+              handler: () => {
+                //TODO Submit form
+                return;
+              },
+            },
+            shift_enter: {
+              key: "Enter",
+              shiftKey: true,
+              handler: () => {
+                quill.insertText(quill.getSelection()?.index || 0, "\n");
+              },
+            },
+          },
+        },
+      },
     };
 
     const quill = new Quill(editorContainer, options);
@@ -104,6 +130,15 @@ function Editor({
     };
   }, [innerRef]);
 
+  const toggleToolbar = () => {
+    setIsToolbarVisible((current) => !current);
+    const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
+
+    if (toolbarElement) {
+      toolbarElement.classList.toggle("hidden");
+    }
+  };
+
   // to check, remove Quills default text of \n (new line)
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -112,12 +147,14 @@ function Editor({
       <div className="flex flex-col bg-white border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition">
         <div ref={containerRef} className="h-full ql-custom" />
         <div className="flex px-2 pb-2 z-5">
-          <Hint label="Hide formatting">
+          <Hint
+            label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
+          >
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={() => {}}
-              disabled={false}
+              onClick={toggleToolbar}
+              disabled={disabled}
             >
               <PiTextAa className="size-4" />
             </Button>
@@ -127,7 +164,7 @@ function Editor({
               variant="ghost"
               size="icon-sm"
               onClick={() => {}}
-              disabled={false}
+              disabled={disabled}
             >
               <Smile className="size-4" />
             </Button>
@@ -138,7 +175,7 @@ function Editor({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => {}}
-                disabled={false}
+                disabled={disabled}
               >
                 <ImageIcon className="size-4" />
               </Button>
@@ -151,7 +188,7 @@ function Editor({
                 size="icon-sm"
                 onClick={() => {}}
                 className=""
-                disabled={false}
+                disabled={disabled}
               >
                 Cancel
               </Button>
@@ -159,7 +196,7 @@ function Editor({
                 size="icon-sm"
                 onClick={() => {}}
                 className="bg-[#007A5A] hover:bg-[#007A5A]/80 text-white"
-                disabled={false}
+                disabled={disabled || isEmpty}
               >
                 Save
               </Button>
@@ -182,11 +219,18 @@ function Editor({
           )}
         </div>
       </div>
-      <div className="flex justify-end p-2 text-[10px] text-muted-foreground">
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" && (
+        <div
+          className={cn(
+            "flex justify-end p-2 text-[10px] text-muted-foreground",
+            !isEmpty && "opacity-100",
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 }
