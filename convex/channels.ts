@@ -99,3 +99,76 @@ export const get = query({
     return channels;
   },
 });
+
+export const update = mutation({
+  args: {
+    id: v.id("channels"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const channel = await ctx.db.get(args.id);
+
+    if (!channel) {
+      throw new Error("Channel not found");
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", channel.workspaceId),
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      name: args.name,
+    });
+
+    return args.id;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    id: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const channel = await ctx.db.get(args.id);
+
+    if (!channel) {
+      throw new Error("Channel not found");
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_user_id_workspace_id", (q) =>
+        q.eq("userId", userId).eq("workspaceId", channel.workspaceId),
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    // TODO: remove associated messages
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
