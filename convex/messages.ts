@@ -1,6 +1,9 @@
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
+
 import { Id } from "./_generated/dataModel";
-import { mutation, QueryCtx } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
+
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 const getMember = async (
@@ -15,6 +18,99 @@ const getMember = async (
     )
     .unique();
 };
+
+const populateUser = (ctx: QueryCtx, userId: Id<"users">) => {
+  return ctx.db.get(userId);
+};
+
+const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
+  return ctx.db.get(memberId);
+};
+
+const populateReactions = (ctx: QueryCtx, messageId: Id<"messages">) => {
+  return ctx.db
+    .query("reactions")
+    .withIndex("by_message_id", (q) => q.eq("messageId", messageId))
+    .collect();
+};
+
+const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
+  const messages = await ctx.db
+    .query("messages")
+    .withIndex("by_parent_message_id", (q) =>
+      q.eq("parentMessageId", messageId),
+    )
+    .collect();
+
+  if (messages.length === 0) {
+    return {
+      count: 0,
+      image: undefined,
+      timestamp: 0,
+    };
+  }
+
+  const lastMessage = messages[messages.length - 1];
+  const lastMessageMember = await populateMember(ctx, lastMessage.memberId);
+
+  if (!lastMessageMember) {
+    return {
+      count: 0,
+      image: undefined,
+      timestamp: 0,
+    };
+  }
+
+  const lastMessageUser = await populateUser(ctx, lastMessageMember.userId);
+
+  if (!lastMessageMember) {
+    return {
+      count: messages.length,
+      image: lastMessageUser?.image,
+      timestamp: lastMessage._creationTime,
+    };
+  }
+};
+
+export const get = query({
+  args: {
+    channelId: v.optional(v.id("channels")),
+    conversationId: v.optional(v.id("conversations")),
+    parentMessageId: v.optional(v.id("messages")),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    let _conversationId = args.conversationId;
+
+    if (!args.conversationId && !args.channelId && args.parentMessageId) {
+      const parentMessage = await ctx.db.get(args.parentMessageId);
+
+      if (!parentMessage) {
+        throw new Error("Parent Message not found");
+      }
+      _conversationId = parentMessage.conversationId;
+    }
+
+    const results = await ctx.db
+      .query("messages")
+      .withIndex("by_channel_id_parent_message_id_conversation_id", (q) =>
+        q
+          .eq("channelId", args.channelId)
+          .eq("parentMessageId", args.parentMessageId)
+          .eq("conversationId", _conversationId),
+      )
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    return results;
+  },
+});
 
 export const create = mutation({
   args: {
