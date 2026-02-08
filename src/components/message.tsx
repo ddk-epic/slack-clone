@@ -5,6 +5,7 @@ import { format, isToday, isYesterday } from "date-fns";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Hint from "./hint";
+import Thumbnail from "./thumbnail";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 
@@ -68,6 +69,7 @@ function Message({
           </Hint>
           <div className="w-full flex flex-col">
             <Renderer value={body} />
+            <Thumbnail url={image} />
             {updatedAt ? (
               <span className="text-xs text-muted-foreground">(edited)</span>
             ) : null}
@@ -105,6 +107,7 @@ function Message({
             </Hint>
           </div>
           <Renderer value={body} />
+          <Thumbnail url={image} />
           {updatedAt ? (
             <span className="text-xs text-muted-foreground">(edited)</span>
           ) : null}
