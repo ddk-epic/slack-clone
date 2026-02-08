@@ -9,15 +9,15 @@ function Thumbnail({ url }: ThumbnailProps) {
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <div className="relative max-w-90 my-2 border rounded-lg cursor-zoom-in overflow-hidden">
+      <div className="relative max-w-90 my-2 border rounded-lg cursor-zoom-in overflow-hidden">
+        <DialogTrigger>
           <img
             src={url}
             alt="Message Image"
             className="size-full rounded-md object-cover"
           />
-        </div>
-      </DialogTrigger>
+        </DialogTrigger>
+      </div>
       <DialogContent className="max-w-200 p-0 bg-transparent border-none shadow-none">
         <DialogTitle className="hidden">{url}</DialogTitle>
         <img
