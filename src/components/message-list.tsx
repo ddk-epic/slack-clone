@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Id } from "../../convex/_generated/dataModel";
-import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
+import { differenceInSeconds, format, isToday, isYesterday } from "date-fns";
 
 import ChannelHero from "./channel-hero";
 import Message from "./message";
@@ -79,10 +79,11 @@ function MessageList({
             const isCompact =
               prevMessage &&
               prevMessage.user?._id === message.user?._id &&
-              differenceInMinutes(
+              differenceInSeconds(
                 new Date(message._creationTime),
-                new Date(prevMessage._creationTime),
-              ) > TIME_THRESHOLD;
+                new Date(prevMessage?._creationTime),
+              ) <=
+                TIME_THRESHOLD * 60; // TIME_TRESHOLD in minutes
 
             return (
               <Message
