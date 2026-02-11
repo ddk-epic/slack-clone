@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useUpdateMessage } from "@/features/messages/api/use-update-message";
+import { usePanel } from "@/hooks/use-panel";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
@@ -66,6 +67,8 @@ function Message({
   isEditing,
   setEditingId,
 }: MessageProps) {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete Message",
     "Are you sure you want to delete this message? This action cannot be undone.",
@@ -89,7 +92,9 @@ function Message({
         onSuccess: () => {
           toast.success("Message deleted");
 
-          // TODO: Close thread if opened
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
@@ -159,7 +164,7 @@ function Message({
               isPending={isPending}
               handleDelete={handleDelete}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleReaction={() => {}}
               hideThreadButton={hideThreadButton}
             />
@@ -230,7 +235,7 @@ function Message({
             isPending={isPending}
             handleDelete={handleDelete}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleReaction={() => {}}
             hideThreadButton={hideThreadButton}
           />
