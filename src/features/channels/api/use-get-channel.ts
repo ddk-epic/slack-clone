@@ -3,11 +3,11 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 
-interface UseGetChannelsProps {
+interface UseGetChannelProps {
   id: Id<"channels">;
 }
 
-export function useGetChannel({ id }: UseGetChannelsProps) {
+export function useGetChannel({ id }: UseGetChannelProps) {
   const data = useQuery(api.channels.getById, { id });
   const isLoading = data === undefined;
 
