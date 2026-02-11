@@ -6,6 +6,7 @@ import { differenceInSeconds, format, isToday, isYesterday } from "date-fns";
 import { Loader } from "lucide-react";
 
 import ChannelHero from "./channel-hero";
+import ConversationHero from "./conversation-hero";
 import Message from "./message";
 
 import { type GetMessagesReturnType } from "@/features/messages/api/use-get-messages";
@@ -140,6 +141,9 @@ function MessageList({
       )}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {variant === "conversation" && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );
