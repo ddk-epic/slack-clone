@@ -5,11 +5,18 @@ interface ThreadBarProps {
   count?: number;
   image?: string;
   timestamp?: number;
+  name?: string;
   onClick?: () => void;
 }
 
-function ThreadBar({ count, image, timestamp, onClick }: ThreadBarProps) {
-  const avatarFallback = "Member".charAt(0).toUpperCase();
+function ThreadBar({
+  count,
+  image,
+  timestamp,
+  name = "Member",
+  onClick,
+}: ThreadBarProps) {
+  const avatarFallback = name.charAt(0).toUpperCase();
 
   if (!count || !timestamp) {
     return;

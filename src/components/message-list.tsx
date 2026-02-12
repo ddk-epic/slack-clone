@@ -104,6 +104,7 @@ function MessageList({
                 threadCount={message.threadCount}
                 threadImage={message.threadImage}
                 threadTimestamp={message.threadTimestamp}
+                threadLastUsername={message.threadLastUsername}
                 hideThreadButton={variant === "thread"}
                 isCompact={isCompact}
                 isEditing={editingId === message._id}

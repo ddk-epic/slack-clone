@@ -216,6 +216,7 @@ function Thread({ messageId, onClose }: ThreadProps) {
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
                   threadTimestamp={message.threadTimestamp}
+                  threadLastUsername={message.threadLastUsername}
                   isCompact={isCompact}
                   isEditing={editingId === message._id}
                   setEditingId={setEditingId}

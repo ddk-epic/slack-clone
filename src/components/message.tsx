@@ -43,6 +43,7 @@ export interface MessageProps {
   threadCount?: number;
   threadImage?: string;
   threadTimestamp?: number;
+  threadLastUsername?: string;
   hideThreadButton?: boolean;
   isCompact?: boolean;
   isEditing: boolean;
@@ -63,6 +64,7 @@ function Message({
   threadCount,
   threadImage,
   threadTimestamp,
+  threadLastUsername,
   hideThreadButton,
   isCompact,
   isEditing,
@@ -160,6 +162,7 @@ function Message({
                   count={threadCount}
                   image={threadImage}
                   timestamp={threadTimestamp}
+                  name={threadLastUsername}
                 onClick={() => onOpenMessage(id)}
                 />
               </div>
@@ -237,6 +240,7 @@ function Message({
                 count={threadCount}
                 image={threadImage}
                 timestamp={threadTimestamp}
+                name={threadLastUsername}
                 onClick={() => onOpenMessage(id)}
               />
             </div>
