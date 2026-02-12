@@ -6,6 +6,7 @@ import { format, isToday, isYesterday } from "date-fns";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Hint from "./hint";
+import ThreadBar from "./thread-bar";
 import Thumbnail from "./thumbnail";
 import Toolbar from "./toolbar";
 import { toast } from "sonner";
@@ -155,6 +156,12 @@ function Message({
                     (edited)
                   </span>
                 ) : null}
+                <ThreadBar
+                  count={threadCount}
+                  image={threadImage}
+                  timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id)}
+                />
               </div>
             )}
           </div>
@@ -226,6 +233,12 @@ function Message({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id)}
+              />
             </div>
           )}
         </div>
