@@ -10,6 +10,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
+import Profile from "@/features/members/components/profile";
 import Sidebar from "./sidebar";
 import Thread from "@/features/messages/components/thread";
 import Toolbar from "./toolbar";
@@ -22,9 +23,9 @@ interface WorkspaceLayoutProps {
 }
 
 export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
-  const { parentMessageId, onClose } = usePanel();
+  const { parentMessageId, profileMemberId, onClose } = usePanel();
 
-  const showPanel = !!parentMessageId;
+  const showPanel = !!parentMessageId || !!profileMemberId;
 
   return (
     <div className="h-full">
@@ -55,6 +56,11 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
                       onClose={onClose}
                     />
                   </div>
+                ) : profileMemberId ? (
+                  <Profile
+                    memberId={profileMemberId as Id<"members">}
+                    onClose={onClose}
+                  />
                 ) : (
                   <div className="h-full flex items-center justify-center">
                     <Loader className="size-5 animate-spin text-muted-foreground" />

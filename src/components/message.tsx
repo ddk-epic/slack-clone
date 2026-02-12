@@ -70,7 +70,7 @@ function Message({
   isEditing,
   setEditingId,
 }: MessageProps) {
-  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+  const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
 
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete Message",
@@ -197,7 +197,7 @@ function Message({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar className="rounded-md ml-0.75 mr-1 mt-1">
               <AvatarImage src={authorImage} className="rounded-md" />
               <AvatarFallback className="rounded-md text-sm">
@@ -219,7 +219,7 @@ function Message({
             <div className="w-full flex flex-col overflow-hidden">
               <div className="text-sm">
                 <button
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)}
                   className="font-bold text-primary hover:underline"
                 >
                   {authorName}
