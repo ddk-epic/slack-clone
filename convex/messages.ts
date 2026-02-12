@@ -63,13 +63,11 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
 
   const lastMessageUser = await populateUser(ctx, lastMessageMember.userId);
 
-  if (!lastMessageMember) {
-    return {
-      count: messages.length,
-      image: lastMessageUser?.image,
-      timestamp: lastMessage._creationTime,
-    };
-  }
+  return {
+    count: messages.length,
+    image: lastMessageUser?.image,
+    timestamp: lastMessage._creationTime,
+  };
 };
 
 export const getById = query({
@@ -244,7 +242,7 @@ export const get = query({
               member,
               user,
               reactions: reactionsWithoutMemberIdProperty,
-              threadCount: thread?.count,
+              threadCount: thread.count,
               threadImage: thread?.image,
               threadTimestamp: thread?.timestamp,
             };
