@@ -26,7 +26,8 @@ export const getById = query({
       .query("members")
       .withIndex("by_user_id_workspace_id", (q) =>
         q.eq("userId", userId).eq("workspaceId", member.workspaceId),
-      );
+      )
+      .unique();
 
     if (!currentMember) {
       return null;
@@ -137,6 +138,20 @@ export const update = mutation({
 
     if (!currentMember || currentMember.role !== "admin") {
       throw new Error("Unauthorized");
+    }
+
+    const workspaceMembers = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) =>
+        q.eq("workspaceId", member.workspaceId),
+      )
+      .collect();
+
+    // hacky solution because I don't want to index by role
+    const admins = workspaceMembers.filter((m) => m.role === "admin");
+
+    if (admins.length === 1) {
+      throw new Error("You cannot remove the only admin.");
     }
 
     await ctx.db.patch(args.id, { role: args.role });
