@@ -237,7 +237,7 @@ function Editor({
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  onClick={() => {}}
+                  onClick={onCancel}
                   className=""
                   disabled={disabled}
                 >
