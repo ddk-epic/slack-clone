@@ -1,23 +1,83 @@
-import { Info, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
+import { Info, Search } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
+
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
+import { useGetMembers } from "@/features/members/api/use-get-members";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 export default function Toolbar() {
   const workspaceId = useWorkspaceId();
-  const { data } = useGetWorkspace({ id: workspaceId });
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
+  const { data: workspace } = useGetWorkspace({ id: workspaceId });
+  const { data: channels } = useGetChannels({ workspaceId });
+  const { data: members } = useGetMembers({ workspaceId });
+
+  const onMemberClick = (memberId: string) => {
+    setOpen(false);
+    router.push(`/workspace/${workspaceId}/member/${memberId}`);
+  };
+
+  const onChannelClick = (channelId: string) => {
+    setOpen(false);
+    router.push(`/workspace/${workspaceId}/channel/${channelId}`);
+  };
+
   return (
     <nav className="bg-[#007FFF] h-10 flex items-center justify-between p-1.5">
       <div className="flex-1" />
       <div className="min-w-70 max-[642px] grow-2 shrink">
         <Button
           size="sm"
+          onClick={() => setOpen(true)}
           className="h-7 w-full justify-start bg-accent/25 hover:bg-accent-25 px-2"
         >
           <Search className="size-4 text-white mr-2" />
-          <span>Search {data?.name}</span>
+          <span>Search {workspace?.name}</span>
         </Button>
+        <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandInput placeholder="Search..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Channels">
+              {channels?.map((channel) => (
+                <CommandItem
+                  key={channel._id}
+                  onSelect={() => onChannelClick(channel._id)}
+                >
+                  {channel.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Members">
+              {members?.map((member) => (
+                <CommandItem
+                  key={member._id}
+                  onSelect={() => onMemberClick(member._id)}
+                >
+                  {member.user.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </CommandDialog>
       </div>
       <div className="flex flex-1 items-center justify-end ml-auto">
         <Button variant="transparent" size="icon-sm">
